@@ -202,8 +202,8 @@ Window {
                                 //remove target
                                 Drag.onDragFinished: {
                                     console.log("Finish");
-//                                    dlg.targetChannel=0;
-//                                    dlg.titleName="CH01";
+                                    dlg.targetChannel=0;
+                                    dlg.titleName="CH01";
                                     //remove target code
                                 }
                                 //remove target -END
@@ -218,26 +218,33 @@ Window {
                                         tile.x = 0;
                                         tile.y = 0;
                                         //control onDragFinished method
-                                        tile.Drag.dragFinished(Qt.CopyAction);
+                                        tile.Drag.dragFinished(Qt.MoveAction);
 
 
                                     }
                                  }
+                                Image {
+                                    width: parent.width
+                                    height: parent.height
+                                    anchors.fill: parent
+                                    source: "qrc:/image/test.jpeg"
+                                }
+
                                 Text {
                                     id: title_txt
                                     text:dlg.titleName
-                                    font.pixelSize: 30
-                                    color:"white"
+                                    font.pixelSize: 50
+                                    color: "black"//"white"
                                 }
                                 //兩個或以上的顏色無接縫混和
-                                LinearGradient  {
-                                    anchors.fill: title_txt
-                                    source: title_txt
-                                    gradient: Gradient {
-                                        GradientStop { position: 0; color: "white" }
-                                        GradientStop { position: 1; color: "black" }
-                                    }
-                                }
+//                                LinearGradient  {
+//                                    anchors.fill: title_txt
+//                                    source: title_txt
+//                                    gradient: Gradient {
+//                                        GradientStop { position: 0; color: "white" }
+//                                        GradientStop { position: 1; color: "black" }
+//                                    }
+//                                }
                                 states: State {
                                     when: ma_3.drag.active
                                     ParentChange { target: tile; parent: dlg }

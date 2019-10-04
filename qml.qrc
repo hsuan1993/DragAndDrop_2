@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>LeftMenu.qml</file>
+        <file>image/test.jpeg</file>
     </qresource>
 </RCC>
