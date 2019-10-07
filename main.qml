@@ -12,8 +12,8 @@ Window {
     height: 768
     title: qsTr("Hello World")
     property real zoomRate: Math.min(width /1920, height /1080)
-    property variant channelSelected: [0,0,0,0,0,0,0,0,0]
 
+signal removeLayer(var layerIndex);
 
     Rectangle
     {
@@ -119,13 +119,18 @@ Window {
                 return rowMulti * item.Layout.rowSpan
             }
             Repeater {
+                id : testRepeater
+                //property int testTraget: 0
                 model: 4
 
 
                 DropArea {
-                    id: dragTarget
+                    id: dragTarget                    
                     keys: [ "Qt" ]
                     property alias dropProxy: dragTarget
+                    //必須是repeater第一子階才能用itemAt
+                    //因此將原本在dlg的targetChannel向上提一階
+                    property int targetChannel: 0 //index
 
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -166,23 +171,48 @@ Window {
                             }
                         }
                     ]
+
                     onDropped: {
-                        if(drop.source._index >= 0)
-                            channelList[drop.source._index] = dlg.targetChannel;
-                        dlg.targetChannel = drop.source._target;
-                        dlg.titleName = "CH0"+ (dlg.targetChannel +1);
-                        channelSelected[index] = dlg.targetChannel;
                         console.log("[CW] index=",index);
-                        console.log("[CW] target=",dlg.targetChannel," ch=",dlg.titleName);
+                        console.log("[CW] _target="+drop.source._target);
+                        console.log("[CW] _index="+drop.source._index);
+
+                        if (drop.source._index === undefined) {
+
+                            //dlg.targetChannel = drop.source._target;
+                            dragTarget.targetChannel = drop.source._target;
+
+                        } else {
+//                            var temp = dlg.targetChannel;
+//                            dlg.targetChannel = drop.source._target;
+                            var temp = dragTarget.targetChannel;
+                            dragTarget.targetChannel = drop.source._target;
+                            //change specific model of repeater object
+                            testRepeater.itemAt(drop.source._index).targetChannel = temp;
+                        }
+
+
+
+                    }
+                    Connections {
+                        target: appWindow
+                        onRemoveLayer: {
+                            console.log("[CW]index=",index," layerIndex=",layerIndex);
+                            if (index === layerIndex) {
+                                //dlg.targetChannel = -1;
+                                dragTarget.targetChannel = -1;
+                                dlg.titleName = "";
+                            }
+                        }
                     }
 
                     Rectangle {
                         id: dlg
                         color: "black"
                         anchors.fill: parent
-                        property int targetChannel: 0 //index
-                        property string titleName: "CH0"+(targetChannel+1)
-
+                        //property int targetChannel: 0 //index
+                        //property string titleName: "CH0"+(targetChannel+1)
+                        property string titleName: "CH0"+(dragTarget.targetChannel+1)
 
                             Item {
                                 id:tile
@@ -198,17 +228,18 @@ Window {
                                 Drag.hotSpot.y: ma_3.mouseY
 
                                 //change channel
-                                property int _target: dlg.targetChannel
+                                //property int _target: dlg.targetChannel
+                                property int _target: dragTarget.targetChannel
                                 property int _index: index
-                                Drag.mimeData: {"target":dlg.targetChannel,"index":index}
+                                //Drag.mimeData: {"target":dlg.targetChannel,"index":index}
+                                Drag.mimeData: {"target":dragTarget.targetChannel,"index":index}
                                 Drag.supportedActions: Qt.CopyAction
 
                                 //remove target
                                 Drag.onDragFinished: {
                                     console.log("Finish");
-                                    dlg.targetChannel=0;
-                                    dlg.titleName="CH01";
                                     //remove target code
+//                                    removeLayer(index);
                                 }
                                 //remove target -END
 
