@@ -145,8 +145,12 @@ Item {
 
                                     Item {
                                         id: tile
-                                        width: parent.width
-                                        height: parent.height
+                                        //Qt: Setting all anchors
+                                        anchors.left: sub.left
+                                        anchors.right: sub.right
+                                        anchors.top: sub.top
+                                        anchors.bottom: sub.bottom
+
                                         Drag.keys: [ "Qt" ]
                                         Drag.active: ma_2.drag.active
                                         Drag.hotSpot.x: ma_2.mouseX
@@ -187,11 +191,15 @@ Item {
                                             font.pixelSize: Math.floor(parent.height *0.55)
                                             color:   objColumn.fontColor1
                                         }
-                                        states: State {
+                                        states: [
+                                            State {
                                             when: ma_2.drag.active
-                                            ParentChange { target: tile; parent: sub }
-                                            AnchorChanges { target: tile; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
-                                        }
+                                            // Qt: Change parent to appWindow.contentItem as appWindow.contentItem is always on top of everything
+                                            ParentChange { target: tile; parent:  appWindow.contentItem }
+                                            // Qt: Make all the anchors undefined
+                                            AnchorChanges { target: tile; anchors.left: undefined ;anchors.right: undefined;anchors.top: undefined;anchors.bottom: undefined   }
+    //                                      AnchorChanges { target: tile; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
+                                        }]
 
                                     }
   /*

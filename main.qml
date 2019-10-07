@@ -186,8 +186,12 @@ Window {
 
                             Item {
                                 id:tile
-                                width: parent.width
-                                height: parent.height
+                                //Qt: Setting all anchors
+                                anchors.left: dlg.left
+                                anchors.right: dlg.right
+                                anchors.top: dlg.top
+                                anchors.bottom: dlg.bottom
+
                                 Drag.keys: ["Qt"]
                                 Drag.active: ma_3.drag.active
                                 Drag.hotSpot.x: ma_3.mouseX
@@ -237,18 +241,21 @@ Window {
                                     color: "black"//"white"
                                 }
                                 //兩個或以上的顏色無接縫混和
-//                                LinearGradient  {
-//                                    anchors.fill: title_txt
-//                                    source: title_txt
-//                                    gradient: Gradient {
-//                                        GradientStop { position: 0; color: "white" }
-//                                        GradientStop { position: 1; color: "black" }
-//                                    }
-//                                }
+                                LinearGradient  {
+                                    anchors.fill: title_txt
+                                    source: title_txt
+                                    gradient: Gradient {
+                                        GradientStop { position: 0; color: "white" }
+                                        GradientStop { position: 1; color: "black" }
+                                    }
+                                }
                                 states: State {
                                     when: ma_3.drag.active
-                                    ParentChange { target: tile; parent: dlg }
-                                    AnchorChanges { target: tile; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
+                                    ParentChange { target: tile; parent:  appWindow.contentItem }
+                                    // Qt: Make all the anchors undefined to allow it to move freely
+                                    AnchorChanges { target: tile; anchors.left: undefined ;anchors.right: undefined;anchors.top: undefined;anchors.bottom: undefined   }
+
+                                   // AnchorChanges { target: tile; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
                                 }
                             }
 
