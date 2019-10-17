@@ -101,6 +101,7 @@ signal removeLayer(var layerIndex);
         property int contentWidth16: Math.min( (contentWidth -contentMinSpacing *3) *9 /16, (contentHeight -contentMinSpacing *3) ) *16 /36
         property int contentHeight16: contentWidth16 *9 /16
 
+        property int zoomInVideoSrc: -1
 
         GridLayout {
             id: grid
@@ -237,12 +238,11 @@ signal removeLayer(var layerIndex);
 
                                 //remove target
                                 Drag.onDragFinished: {
-                                    console.log("Finish");
+                                        console.log("Finish");
                                     //remove target code
 //                                    removeLayer(index);
                                 }
                                 //remove target -END
-
                                 MouseArea {
                                     id: ma_3
                                     width:parent.width
@@ -256,6 +256,16 @@ signal removeLayer(var layerIndex);
                                         tile.Drag.dragFinished(Qt.MoveAction);
 
 
+                                    }
+
+                                    onDoubleClicked: {
+                                        console.log("double click");
+                                        gridDlg.zoomInVideoSrc = dragTarget.targetChannel;
+
+                                        if (zoomInLayout.visible)
+                                            zoomInLayout.visible = false;
+                                        else
+                                            zoomInLayout.visible = true;
                                     }
                                  }
                                 Image {
@@ -298,7 +308,38 @@ signal removeLayer(var layerIndex);
 
 
         }
+        Rectangle {
+            id: zoomInLayout
+            width: Math.round(gridDlg.contentWidth)
+            height: Math.round(gridDlg.contentHeight)
+            x: Math.round(gridDlg.widthSpacing /2)
+            y: Math.round(gridDlg.heightSpacing /2)
+            color: "red"
+            visible: false
 
+            Image {
+                width: parent.width
+                height: parent.height
+                anchors.fill: parent
+                source: "qrc:/image/test.jpeg"
+            }
+
+            Text {
+                id: title_txt_2
+                text:"CH0"+(gridDlg.zoomInVideoSrc+1)
+                font.pixelSize: 50
+                color: "black"//"white"
+            }
+            //兩個或以上的顏色無接縫混和
+            LinearGradient  {
+                anchors.fill: title_txt_2
+                source: title_txt_2
+                gradient: Gradient {
+                    GradientStop { position: 0; color: "white" }
+                    GradientStop { position: 1; color: "black" }
+                }
+            }
+        }
 
     }
 
